@@ -18,6 +18,12 @@ api.get('/', async (c) => {
   return c.json({ message: "Hello World", results })
 })
 
+// api.post('/register', async (c) => {
+//   const prisma = getPrismaClient()
+//   const results = await prisma.registration.create()
+//   return c.json({ message: "Registration created", results })
+// })
+
 app.route('/api', api)
 
 export default app

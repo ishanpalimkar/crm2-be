@@ -237,7 +237,8 @@ exports.Prisma.RegistrationScalarFieldEnum = {
   id: 'id',
   programId: 'programId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 };
 
 exports.Prisma.SortOrder = {

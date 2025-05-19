@@ -1615,12 +1615,14 @@ export namespace Prisma {
     emails: number
     addresses: number
     mobileNumbers: number
+    registrations: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     emails?: boolean | UserCountOutputTypeCountEmailsArgs
     addresses?: boolean | UserCountOutputTypeCountAddressesArgs
     mobileNumbers?: boolean | UserCountOutputTypeCountMobileNumbersArgs
+    registrations?: boolean | UserCountOutputTypeCountRegistrationsArgs
   }
 
   // Custom InputTypes
@@ -1653,6 +1655,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountMobileNumbersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MobileNumberWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRegistrationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RegistrationWhereInput
   }
 
 
@@ -2038,6 +2047,7 @@ export namespace Prisma {
     addresses?: boolean | User$addressesArgs<ExtArgs>
     mobileNumbers?: boolean | User$mobileNumbersArgs<ExtArgs>
     teacher?: boolean | User$teacherArgs<ExtArgs>
+    registrations?: boolean | User$registrationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2059,6 +2069,7 @@ export namespace Prisma {
     addresses?: boolean | User$addressesArgs<ExtArgs>
     mobileNumbers?: boolean | User$mobileNumbersArgs<ExtArgs>
     teacher?: boolean | User$teacherArgs<ExtArgs>
+    registrations?: boolean | User$registrationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -2069,6 +2080,7 @@ export namespace Prisma {
       addresses: Prisma.$AddressPayload<ExtArgs>[]
       mobileNumbers: Prisma.$MobileNumberPayload<ExtArgs>[]
       teacher: Prisma.$TeacherPayload<ExtArgs> | null
+      registrations: Prisma.$RegistrationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -2422,6 +2434,7 @@ export namespace Prisma {
     addresses<T extends User$addressesArgs<ExtArgs> = {}>(args?: Subset<T, User$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     mobileNumbers<T extends User$mobileNumbersArgs<ExtArgs> = {}>(args?: Subset<T, User$mobileNumbersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MobileNumberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     teacher<T extends User$teacherArgs<ExtArgs> = {}>(args?: Subset<T, User$teacherArgs<ExtArgs>>): Prisma__TeacherClient<$Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    registrations<T extends User$registrationsArgs<ExtArgs> = {}>(args?: Subset<T, User$registrationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RegistrationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2889,6 +2902,30 @@ export namespace Prisma {
      */
     include?: TeacherInclude<ExtArgs> | null
     where?: TeacherWhereInput
+  }
+
+  /**
+   * User.registrations
+   */
+  export type User$registrationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Registration
+     */
+    select?: RegistrationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Registration
+     */
+    omit?: RegistrationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RegistrationInclude<ExtArgs> | null
+    where?: RegistrationWhereInput
+    orderBy?: RegistrationOrderByWithRelationInput | RegistrationOrderByWithRelationInput[]
+    cursor?: RegistrationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RegistrationScalarFieldEnum | RegistrationScalarFieldEnum[]
   }
 
   /**
@@ -11309,11 +11346,13 @@ export namespace Prisma {
   export type RegistrationAvgAggregateOutputType = {
     id: number | null
     programId: number | null
+    userId: number | null
   }
 
   export type RegistrationSumAggregateOutputType = {
     id: number | null
     programId: number | null
+    userId: number | null
   }
 
   export type RegistrationMinAggregateOutputType = {
@@ -11321,6 +11360,7 @@ export namespace Prisma {
     programId: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    userId: number | null
   }
 
   export type RegistrationMaxAggregateOutputType = {
@@ -11328,6 +11368,7 @@ export namespace Prisma {
     programId: number | null
     createdAt: Date | null
     updatedAt: Date | null
+    userId: number | null
   }
 
   export type RegistrationCountAggregateOutputType = {
@@ -11335,6 +11376,7 @@ export namespace Prisma {
     programId: number
     createdAt: number
     updatedAt: number
+    userId: number
     _all: number
   }
 
@@ -11342,11 +11384,13 @@ export namespace Prisma {
   export type RegistrationAvgAggregateInputType = {
     id?: true
     programId?: true
+    userId?: true
   }
 
   export type RegistrationSumAggregateInputType = {
     id?: true
     programId?: true
+    userId?: true
   }
 
   export type RegistrationMinAggregateInputType = {
@@ -11354,6 +11398,7 @@ export namespace Prisma {
     programId?: true
     createdAt?: true
     updatedAt?: true
+    userId?: true
   }
 
   export type RegistrationMaxAggregateInputType = {
@@ -11361,6 +11406,7 @@ export namespace Prisma {
     programId?: true
     createdAt?: true
     updatedAt?: true
+    userId?: true
   }
 
   export type RegistrationCountAggregateInputType = {
@@ -11368,6 +11414,7 @@ export namespace Prisma {
     programId?: true
     createdAt?: true
     updatedAt?: true
+    userId?: true
     _all?: true
   }
 
@@ -11462,6 +11509,7 @@ export namespace Prisma {
     programId: number
     createdAt: Date
     updatedAt: Date
+    userId: number
     _count: RegistrationCountAggregateOutputType | null
     _avg: RegistrationAvgAggregateOutputType | null
     _sum: RegistrationSumAggregateOutputType | null
@@ -11488,7 +11536,9 @@ export namespace Prisma {
     programId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    userId?: boolean
     program?: boolean | ProgramDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["registration"]>
 
 
@@ -11498,23 +11548,27 @@ export namespace Prisma {
     programId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    userId?: boolean
   }
 
-  export type RegistrationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "programId" | "createdAt" | "updatedAt", ExtArgs["result"]["registration"]>
+  export type RegistrationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "programId" | "createdAt" | "updatedAt" | "userId", ExtArgs["result"]["registration"]>
   export type RegistrationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     program?: boolean | ProgramDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $RegistrationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Registration"
     objects: {
       program: Prisma.$ProgramPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       programId: number
       createdAt: Date
       updatedAt: Date
+      userId: number
     }, ExtArgs["result"]["registration"]>
     composites: {}
   }
@@ -11856,6 +11910,7 @@ export namespace Prisma {
   export interface Prisma__RegistrationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     program<T extends ProgramDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProgramDefaultArgs<ExtArgs>>): Prisma__ProgramClient<$Result.GetResult<Prisma.$ProgramPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11889,6 +11944,7 @@ export namespace Prisma {
     readonly programId: FieldRef<"Registration", 'Int'>
     readonly createdAt: FieldRef<"Registration", 'DateTime'>
     readonly updatedAt: FieldRef<"Registration", 'DateTime'>
+    readonly userId: FieldRef<"Registration", 'Int'>
   }
     
 
@@ -12408,7 +12464,8 @@ export namespace Prisma {
     id: 'id',
     programId: 'programId',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    userId: 'userId'
   };
 
   export type RegistrationScalarFieldEnum = (typeof RegistrationScalarFieldEnum)[keyof typeof RegistrationScalarFieldEnum]
@@ -12606,6 +12663,7 @@ export namespace Prisma {
     addresses?: AddressListRelationFilter
     mobileNumbers?: MobileNumberListRelationFilter
     teacher?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
+    registrations?: RegistrationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -12620,6 +12678,7 @@ export namespace Prisma {
     addresses?: AddressOrderByRelationAggregateInput
     mobileNumbers?: MobileNumberOrderByRelationAggregateInput
     teacher?: TeacherOrderByWithRelationInput
+    registrations?: RegistrationOrderByRelationAggregateInput
     _relevance?: UserOrderByRelevanceInput
   }
 
@@ -12638,6 +12697,7 @@ export namespace Prisma {
     addresses?: AddressListRelationFilter
     mobileNumbers?: MobileNumberListRelationFilter
     teacher?: XOR<TeacherNullableScalarRelationFilter, TeacherWhereInput> | null
+    registrations?: RegistrationListRelationFilter
   }, "id">
 
   export type UserOrderByWithAggregationInput = {
@@ -13361,7 +13421,9 @@ export namespace Prisma {
     programId?: IntFilter<"Registration"> | number
     createdAt?: DateTimeFilter<"Registration"> | Date | string
     updatedAt?: DateTimeFilter<"Registration"> | Date | string
+    userId?: IntFilter<"Registration"> | number
     program?: XOR<ProgramScalarRelationFilter, ProgramWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type RegistrationOrderByWithRelationInput = {
@@ -13369,7 +13431,9 @@ export namespace Prisma {
     programId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
     program?: ProgramOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type RegistrationWhereUniqueInput = Prisma.AtLeast<{
@@ -13380,7 +13444,9 @@ export namespace Prisma {
     programId?: IntFilter<"Registration"> | number
     createdAt?: DateTimeFilter<"Registration"> | Date | string
     updatedAt?: DateTimeFilter<"Registration"> | Date | string
+    userId?: IntFilter<"Registration"> | number
     program?: XOR<ProgramScalarRelationFilter, ProgramWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type RegistrationOrderByWithAggregationInput = {
@@ -13388,6 +13454,7 @@ export namespace Prisma {
     programId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
     _count?: RegistrationCountOrderByAggregateInput
     _avg?: RegistrationAvgOrderByAggregateInput
     _max?: RegistrationMaxOrderByAggregateInput
@@ -13403,6 +13470,7 @@ export namespace Prisma {
     programId?: IntWithAggregatesFilter<"Registration"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Registration"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Registration"> | Date | string
+    userId?: IntWithAggregatesFilter<"Registration"> | number
   }
 
   export type UserCreateInput = {
@@ -13416,6 +13484,7 @@ export namespace Prisma {
     addresses?: AddressCreateNestedManyWithoutUserInput
     mobileNumbers?: MobileNumberCreateNestedManyWithoutUserInput
     teacher?: TeacherCreateNestedOneWithoutUserInput
+    registrations?: RegistrationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -13430,6 +13499,7 @@ export namespace Prisma {
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     mobileNumbers?: MobileNumberUncheckedCreateNestedManyWithoutUserInput
     teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
+    registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -13443,6 +13513,7 @@ export namespace Prisma {
     addresses?: AddressUpdateManyWithoutUserNestedInput
     mobileNumbers?: MobileNumberUpdateManyWithoutUserNestedInput
     teacher?: TeacherUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -13457,6 +13528,7 @@ export namespace Prisma {
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     mobileNumbers?: MobileNumberUncheckedUpdateManyWithoutUserNestedInput
     teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -14212,6 +14284,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     program: ProgramCreateNestedOneWithoutRegistrationsInput
+    user: UserCreateNestedOneWithoutRegistrationsInput
   }
 
   export type RegistrationUncheckedCreateInput = {
@@ -14219,12 +14292,14 @@ export namespace Prisma {
     programId: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: number
   }
 
   export type RegistrationUpdateInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     program?: ProgramUpdateOneRequiredWithoutRegistrationsNestedInput
+    user?: UserUpdateOneRequiredWithoutRegistrationsNestedInput
   }
 
   export type RegistrationUncheckedUpdateInput = {
@@ -14232,6 +14307,7 @@ export namespace Prisma {
     programId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: IntFieldUpdateOperationsInput | number
   }
 
   export type RegistrationCreateManyInput = {
@@ -14239,6 +14315,7 @@ export namespace Prisma {
     programId: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: number
   }
 
   export type RegistrationUpdateManyMutationInput = {
@@ -14251,6 +14328,7 @@ export namespace Prisma {
     programId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: IntFieldUpdateOperationsInput | number
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -14328,6 +14406,12 @@ export namespace Prisma {
     isNot?: TeacherWhereInput | null
   }
 
+  export type RegistrationListRelationFilter = {
+    every?: RegistrationWhereInput
+    some?: RegistrationWhereInput
+    none?: RegistrationWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -14342,6 +14426,10 @@ export namespace Prisma {
   }
 
   export type MobileNumberOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RegistrationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -15002,17 +15090,7 @@ export namespace Prisma {
     none?: TeacherWhereInput
   }
 
-  export type RegistrationListRelationFilter = {
-    every?: RegistrationWhereInput
-    some?: RegistrationWhereInput
-    none?: RegistrationWhereInput
-  }
-
   export type TeacherOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type RegistrationOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -15101,11 +15179,13 @@ export namespace Prisma {
     programId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type RegistrationAvgOrderByAggregateInput = {
     id?: SortOrder
     programId?: SortOrder
+    userId?: SortOrder
   }
 
   export type RegistrationMaxOrderByAggregateInput = {
@@ -15113,6 +15193,7 @@ export namespace Prisma {
     programId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type RegistrationMinOrderByAggregateInput = {
@@ -15120,11 +15201,13 @@ export namespace Prisma {
     programId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type RegistrationSumOrderByAggregateInput = {
     id?: SortOrder
     programId?: SortOrder
+    userId?: SortOrder
   }
 
   export type EmailCreateNestedManyWithoutUserInput = {
@@ -15154,6 +15237,13 @@ export namespace Prisma {
     connect?: TeacherWhereUniqueInput
   }
 
+  export type RegistrationCreateNestedManyWithoutUserInput = {
+    create?: XOR<RegistrationCreateWithoutUserInput, RegistrationUncheckedCreateWithoutUserInput> | RegistrationCreateWithoutUserInput[] | RegistrationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RegistrationCreateOrConnectWithoutUserInput | RegistrationCreateOrConnectWithoutUserInput[]
+    createMany?: RegistrationCreateManyUserInputEnvelope
+    connect?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+  }
+
   export type EmailUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<EmailCreateWithoutUserInput, EmailUncheckedCreateWithoutUserInput> | EmailCreateWithoutUserInput[] | EmailUncheckedCreateWithoutUserInput[]
     connectOrCreate?: EmailCreateOrConnectWithoutUserInput | EmailCreateOrConnectWithoutUserInput[]
@@ -15179,6 +15269,13 @@ export namespace Prisma {
     create?: XOR<TeacherCreateWithoutUserInput, TeacherUncheckedCreateWithoutUserInput>
     connectOrCreate?: TeacherCreateOrConnectWithoutUserInput
     connect?: TeacherWhereUniqueInput
+  }
+
+  export type RegistrationUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<RegistrationCreateWithoutUserInput, RegistrationUncheckedCreateWithoutUserInput> | RegistrationCreateWithoutUserInput[] | RegistrationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RegistrationCreateOrConnectWithoutUserInput | RegistrationCreateOrConnectWithoutUserInput[]
+    createMany?: RegistrationCreateManyUserInputEnvelope
+    connect?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -15245,6 +15342,20 @@ export namespace Prisma {
     update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutUserInput, TeacherUpdateWithoutUserInput>, TeacherUncheckedUpdateWithoutUserInput>
   }
 
+  export type RegistrationUpdateManyWithoutUserNestedInput = {
+    create?: XOR<RegistrationCreateWithoutUserInput, RegistrationUncheckedCreateWithoutUserInput> | RegistrationCreateWithoutUserInput[] | RegistrationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RegistrationCreateOrConnectWithoutUserInput | RegistrationCreateOrConnectWithoutUserInput[]
+    upsert?: RegistrationUpsertWithWhereUniqueWithoutUserInput | RegistrationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: RegistrationCreateManyUserInputEnvelope
+    set?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+    disconnect?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+    delete?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+    connect?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+    update?: RegistrationUpdateWithWhereUniqueWithoutUserInput | RegistrationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RegistrationUpdateManyWithWhereWithoutUserInput | RegistrationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RegistrationScalarWhereInput | RegistrationScalarWhereInput[]
+  }
+
   export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
@@ -15303,6 +15414,20 @@ export namespace Prisma {
     delete?: TeacherWhereInput | boolean
     connect?: TeacherWhereUniqueInput
     update?: XOR<XOR<TeacherUpdateToOneWithWhereWithoutUserInput, TeacherUpdateWithoutUserInput>, TeacherUncheckedUpdateWithoutUserInput>
+  }
+
+  export type RegistrationUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<RegistrationCreateWithoutUserInput, RegistrationUncheckedCreateWithoutUserInput> | RegistrationCreateWithoutUserInput[] | RegistrationUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RegistrationCreateOrConnectWithoutUserInput | RegistrationCreateOrConnectWithoutUserInput[]
+    upsert?: RegistrationUpsertWithWhereUniqueWithoutUserInput | RegistrationUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: RegistrationCreateManyUserInputEnvelope
+    set?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+    disconnect?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+    delete?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+    connect?: RegistrationWhereUniqueInput | RegistrationWhereUniqueInput[]
+    update?: RegistrationUpdateWithWhereUniqueWithoutUserInput | RegistrationUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RegistrationUpdateManyWithWhereWithoutUserInput | RegistrationUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RegistrationScalarWhereInput | RegistrationScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutEmailsInput = {
@@ -15783,12 +15908,26 @@ export namespace Prisma {
     connect?: ProgramWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutRegistrationsInput = {
+    create?: XOR<UserCreateWithoutRegistrationsInput, UserUncheckedCreateWithoutRegistrationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRegistrationsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type ProgramUpdateOneRequiredWithoutRegistrationsNestedInput = {
     create?: XOR<ProgramCreateWithoutRegistrationsInput, ProgramUncheckedCreateWithoutRegistrationsInput>
     connectOrCreate?: ProgramCreateOrConnectWithoutRegistrationsInput
     upsert?: ProgramUpsertWithoutRegistrationsInput
     connect?: ProgramWhereUniqueInput
     update?: XOR<XOR<ProgramUpdateToOneWithWhereWithoutRegistrationsInput, ProgramUpdateWithoutRegistrationsInput>, ProgramUncheckedUpdateWithoutRegistrationsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutRegistrationsNestedInput = {
+    create?: XOR<UserCreateWithoutRegistrationsInput, UserUncheckedCreateWithoutRegistrationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRegistrationsInput
+    upsert?: UserUpsertWithoutRegistrationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRegistrationsInput, UserUpdateWithoutRegistrationsInput>, UserUncheckedUpdateWithoutRegistrationsInput>
   }
 
   export type NestedIntFilter<$PrismaModel = never> = {
@@ -16149,6 +16288,29 @@ export namespace Prisma {
     create: XOR<TeacherCreateWithoutUserInput, TeacherUncheckedCreateWithoutUserInput>
   }
 
+  export type RegistrationCreateWithoutUserInput = {
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    program: ProgramCreateNestedOneWithoutRegistrationsInput
+  }
+
+  export type RegistrationUncheckedCreateWithoutUserInput = {
+    id?: number
+    programId: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RegistrationCreateOrConnectWithoutUserInput = {
+    where: RegistrationWhereUniqueInput
+    create: XOR<RegistrationCreateWithoutUserInput, RegistrationUncheckedCreateWithoutUserInput>
+  }
+
+  export type RegistrationCreateManyUserInputEnvelope = {
+    data: RegistrationCreateManyUserInput | RegistrationCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type EmailUpsertWithWhereUniqueWithoutUserInput = {
     where: EmailWhereUniqueInput
     update: XOR<EmailUpdateWithoutUserInput, EmailUncheckedUpdateWithoutUserInput>
@@ -16271,6 +16433,33 @@ export namespace Prisma {
     coTaughtPrograms?: ProgramUncheckedUpdateManyWithoutCoTeachersNestedInput
   }
 
+  export type RegistrationUpsertWithWhereUniqueWithoutUserInput = {
+    where: RegistrationWhereUniqueInput
+    update: XOR<RegistrationUpdateWithoutUserInput, RegistrationUncheckedUpdateWithoutUserInput>
+    create: XOR<RegistrationCreateWithoutUserInput, RegistrationUncheckedCreateWithoutUserInput>
+  }
+
+  export type RegistrationUpdateWithWhereUniqueWithoutUserInput = {
+    where: RegistrationWhereUniqueInput
+    data: XOR<RegistrationUpdateWithoutUserInput, RegistrationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type RegistrationUpdateManyWithWhereWithoutUserInput = {
+    where: RegistrationScalarWhereInput
+    data: XOR<RegistrationUpdateManyMutationInput, RegistrationUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type RegistrationScalarWhereInput = {
+    AND?: RegistrationScalarWhereInput | RegistrationScalarWhereInput[]
+    OR?: RegistrationScalarWhereInput[]
+    NOT?: RegistrationScalarWhereInput | RegistrationScalarWhereInput[]
+    id?: IntFilter<"Registration"> | number
+    programId?: IntFilter<"Registration"> | number
+    createdAt?: DateTimeFilter<"Registration"> | Date | string
+    updatedAt?: DateTimeFilter<"Registration"> | Date | string
+    userId?: IntFilter<"Registration"> | number
+  }
+
   export type UserCreateWithoutEmailsInput = {
     userId: string
     name: string
@@ -16281,6 +16470,7 @@ export namespace Prisma {
     addresses?: AddressCreateNestedManyWithoutUserInput
     mobileNumbers?: MobileNumberCreateNestedManyWithoutUserInput
     teacher?: TeacherCreateNestedOneWithoutUserInput
+    registrations?: RegistrationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutEmailsInput = {
@@ -16294,6 +16484,7 @@ export namespace Prisma {
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     mobileNumbers?: MobileNumberUncheckedCreateNestedManyWithoutUserInput
     teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
+    registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutEmailsInput = {
@@ -16322,6 +16513,7 @@ export namespace Prisma {
     addresses?: AddressUpdateManyWithoutUserNestedInput
     mobileNumbers?: MobileNumberUpdateManyWithoutUserNestedInput
     teacher?: TeacherUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutEmailsInput = {
@@ -16335,6 +16527,7 @@ export namespace Prisma {
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     mobileNumbers?: MobileNumberUncheckedUpdateManyWithoutUserNestedInput
     teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutMobileNumbersInput = {
@@ -16347,6 +16540,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     teacher?: TeacherCreateNestedOneWithoutUserInput
+    registrations?: RegistrationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMobileNumbersInput = {
@@ -16360,6 +16554,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
+    registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMobileNumbersInput = {
@@ -16388,6 +16583,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     teacher?: TeacherUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMobileNumbersInput = {
@@ -16401,6 +16597,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAddressesInput = {
@@ -16413,6 +16610,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     mobileNumbers?: MobileNumberCreateNestedManyWithoutUserInput
     teacher?: TeacherCreateNestedOneWithoutUserInput
+    registrations?: RegistrationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAddressesInput = {
@@ -16426,6 +16624,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     mobileNumbers?: MobileNumberUncheckedCreateNestedManyWithoutUserInput
     teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
+    registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAddressesInput = {
@@ -16454,6 +16653,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     mobileNumbers?: MobileNumberUpdateManyWithoutUserNestedInput
     teacher?: TeacherUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -16467,6 +16667,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     mobileNumbers?: MobileNumberUncheckedUpdateManyWithoutUserNestedInput
     teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
+    registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutTeacherInput = {
@@ -16479,6 +16680,7 @@ export namespace Prisma {
     emails?: EmailCreateNestedManyWithoutUserInput
     addresses?: AddressCreateNestedManyWithoutUserInput
     mobileNumbers?: MobileNumberCreateNestedManyWithoutUserInput
+    registrations?: RegistrationCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTeacherInput = {
@@ -16492,6 +16694,7 @@ export namespace Prisma {
     emails?: EmailUncheckedCreateNestedManyWithoutUserInput
     addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
     mobileNumbers?: MobileNumberUncheckedCreateNestedManyWithoutUserInput
+    registrations?: RegistrationUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTeacherInput = {
@@ -16646,6 +16849,7 @@ export namespace Prisma {
     emails?: EmailUpdateManyWithoutUserNestedInput
     addresses?: AddressUpdateManyWithoutUserNestedInput
     mobileNumbers?: MobileNumberUpdateManyWithoutUserNestedInput
+    registrations?: RegistrationUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTeacherInput = {
@@ -16659,6 +16863,7 @@ export namespace Prisma {
     emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
     addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
     mobileNumbers?: MobileNumberUncheckedUpdateManyWithoutUserNestedInput
+    registrations?: RegistrationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TeacherEligibilityUpsertWithWhereUniqueWithoutTeacherInput = {
@@ -17209,12 +17414,14 @@ export namespace Prisma {
   export type RegistrationCreateWithoutProgramInput = {
     createdAt?: Date | string
     updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutRegistrationsInput
   }
 
   export type RegistrationUncheckedCreateWithoutProgramInput = {
     id?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: number
   }
 
   export type RegistrationCreateOrConnectWithoutProgramInput = {
@@ -17402,16 +17609,6 @@ export namespace Prisma {
     data: XOR<RegistrationUpdateManyMutationInput, RegistrationUncheckedUpdateManyWithoutProgramInput>
   }
 
-  export type RegistrationScalarWhereInput = {
-    AND?: RegistrationScalarWhereInput | RegistrationScalarWhereInput[]
-    OR?: RegistrationScalarWhereInput[]
-    NOT?: RegistrationScalarWhereInput | RegistrationScalarWhereInput[]
-    id?: IntFilter<"Registration"> | number
-    programId?: IntFilter<"Registration"> | number
-    createdAt?: DateTimeFilter<"Registration"> | Date | string
-    updatedAt?: DateTimeFilter<"Registration"> | Date | string
-  }
-
   export type ProgramCreateWithoutRegistrationsInput = {
     timing: JsonNullValueInput | InputJsonValue
     tags?: JsonNullValueInput | InputJsonValue
@@ -17458,6 +17655,38 @@ export namespace Prisma {
   export type ProgramCreateOrConnectWithoutRegistrationsInput = {
     where: ProgramWhereUniqueInput
     create: XOR<ProgramCreateWithoutRegistrationsInput, ProgramUncheckedCreateWithoutRegistrationsInput>
+  }
+
+  export type UserCreateWithoutRegistrationsInput = {
+    userId: string
+    name: string
+    email?: string | null
+    mobileNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emails?: EmailCreateNestedManyWithoutUserInput
+    addresses?: AddressCreateNestedManyWithoutUserInput
+    mobileNumbers?: MobileNumberCreateNestedManyWithoutUserInput
+    teacher?: TeacherCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutRegistrationsInput = {
+    id?: number
+    userId: string
+    name: string
+    email?: string | null
+    mobileNumber?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emails?: EmailUncheckedCreateNestedManyWithoutUserInput
+    addresses?: AddressUncheckedCreateNestedManyWithoutUserInput
+    mobileNumbers?: MobileNumberUncheckedCreateNestedManyWithoutUserInput
+    teacher?: TeacherUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutRegistrationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRegistrationsInput, UserUncheckedCreateWithoutRegistrationsInput>
   }
 
   export type ProgramUpsertWithoutRegistrationsInput = {
@@ -17514,6 +17743,44 @@ export namespace Prisma {
     coTeachers?: TeacherUncheckedUpdateManyWithoutCoTaughtProgramsNestedInput
   }
 
+  export type UserUpsertWithoutRegistrationsInput = {
+    update: XOR<UserUpdateWithoutRegistrationsInput, UserUncheckedUpdateWithoutRegistrationsInput>
+    create: XOR<UserCreateWithoutRegistrationsInput, UserUncheckedCreateWithoutRegistrationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutRegistrationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutRegistrationsInput, UserUncheckedUpdateWithoutRegistrationsInput>
+  }
+
+  export type UserUpdateWithoutRegistrationsInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emails?: EmailUpdateManyWithoutUserNestedInput
+    addresses?: AddressUpdateManyWithoutUserNestedInput
+    mobileNumbers?: MobileNumberUpdateManyWithoutUserNestedInput
+    teacher?: TeacherUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRegistrationsInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    userId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emails?: EmailUncheckedUpdateManyWithoutUserNestedInput
+    addresses?: AddressUncheckedUpdateManyWithoutUserNestedInput
+    mobileNumbers?: MobileNumberUncheckedUpdateManyWithoutUserNestedInput
+    teacher?: TeacherUncheckedUpdateOneWithoutUserNestedInput
+  }
+
   export type EmailCreateManyUserInput = {
     id?: number
     email: string
@@ -17534,6 +17801,13 @@ export namespace Prisma {
     id?: number
     mobileNumber: string
     isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RegistrationCreateManyUserInput = {
+    id?: number
+    programId: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -17603,6 +17877,26 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     mobileNumber?: StringFieldUpdateOperationsInput | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegistrationUpdateWithoutUserInput = {
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    program?: ProgramUpdateOneRequiredWithoutRegistrationsNestedInput
+  }
+
+  export type RegistrationUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    programId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RegistrationUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    programId?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17986,6 +18280,7 @@ export namespace Prisma {
     id?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    userId: number
   }
 
   export type TeacherUpdateWithoutCoTaughtProgramsInput = {
@@ -18030,18 +18325,21 @@ export namespace Prisma {
   export type RegistrationUpdateWithoutProgramInput = {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutRegistrationsNestedInput
   }
 
   export type RegistrationUncheckedUpdateWithoutProgramInput = {
     id?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: IntFieldUpdateOperationsInput | number
   }
 
   export type RegistrationUncheckedUpdateManyWithoutProgramInput = {
     id?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: IntFieldUpdateOperationsInput | number
   }
 
 

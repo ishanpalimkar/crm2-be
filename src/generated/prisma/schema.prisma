@@ -20,6 +20,7 @@ model User {
   addresses     Address[]
   mobileNumbers MobileNumber[]
   teacher       Teacher?
+  registrations Registration[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -32,6 +33,8 @@ model Email {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
+
+  @@index([userId])
 }
 
 model MobileNumber {
@@ -42,6 +45,8 @@ model MobileNumber {
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
   userId       Int
+
+  @@index([userId])
 }
 
 model Address {
@@ -52,6 +57,8 @@ model Address {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
+
+  @@index([userId])
 }
 
 model Teacher {
@@ -64,8 +71,8 @@ model Teacher {
   isActive         Boolean              @default(true)
   isSearchable     Boolean              @default(true)
   isOnboarded      Boolean              @default(false)
-  programs         Program[]            @relation("TeacherPrograms")
-  coTaughtPrograms Program[]            @relation("CoTaughtPrograms")
+  programs         Program[]            @relation(name: "TeacherPrograms")
+  coTaughtPrograms Program[]            @relation(name: "CoTaughtPrograms")
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
 }
@@ -159,6 +166,8 @@ model Registration {
   program   Program  @relation(fields: [programId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
 
   @@index([programId])
 }

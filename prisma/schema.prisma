@@ -1,6 +1,6 @@
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -11,17 +11,21 @@ generator client {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  userId        String
-  name          String
-  email         String?
-  mobileNumber  String?
-  emails        Email[]
-  addresses     Address[]
-  mobileNumbers MobileNumber[]
-  teacher       Teacher?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id                   Int                   @id @default(autoincrement())
+  userId               String
+  name                 String
+  email                String?
+  mobileNumber         String?
+  emails               Email[]
+  addresses            Address[]
+  mobileNumbers        MobileNumber[]
+  teacher              Teacher?
+  volunteer            Volunteer?
+  programParticipants  ProgramParticipant[]
+  programs             Program[]             @relation("ProgramOrganisers")
+  participantResources ParticipantResource[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
 }
 
 model Email {
@@ -32,6 +36,8 @@ model Email {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
+
+  @@index([userId])
 }
 
 model MobileNumber {
@@ -42,6 +48,8 @@ model MobileNumber {
   updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id])
   userId       Int
+
+  @@index([userId])
 }
 
 model Address {
@@ -52,6 +60,17 @@ model Address {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
+
+  @@index([userId])
+}
+
+model Volunteer {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @unique
+  user      User      @relation(fields: [userId], references: [id])
+  programs  Program[] @relation("VolunteerPrograms")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model Teacher {
@@ -64,8 +83,9 @@ model Teacher {
   isActive         Boolean              @default(true)
   isSearchable     Boolean              @default(true)
   isOnboarded      Boolean              @default(false)
-  programs         Program[]            @relation("TeacherPrograms")
-  coTaughtPrograms Program[]            @relation("CoTaughtPrograms")
+  programs         Program[]            @relation(name: "TeacherPrograms")
+  coTaughtPrograms Program[]            @relation(name: "CoTaughtPrograms")
+  leads            Lead[]
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt
 }
@@ -98,6 +118,8 @@ model ProgramType {
   teacherEligibility TeacherEligibility[]
   preRequisites      Json?
   programs           Program[]
+  resources          ProgramResource[]
+  leads              Lead[]
   feeStructure       Json
 }
 
@@ -124,41 +146,137 @@ model Center {
 }
 
 model Program {
-  id                        Int            @id @default(autoincrement())
+  id                        Int                  @id @default(autoincrement())
   programTypeId             Int
-  programType               ProgramType    @relation(fields: [programTypeId], references: [id])
+  programType               ProgramType          @relation(fields: [programTypeId], references: [id])
   centerId                  Int?
-  center                    Center?        @relation(fields: [centerId], references: [id])
+  center                    Center?              @relation(fields: [centerId], references: [id])
   timing                    Json // define default
-  tags                      Json           @default("[]")
+  tags                      Json                 @default("[]")
   registrationCloseDateTime DateTime?
   registrationOpenDateTime  DateTime? // think
-  scheduled                 Boolean        @default(false) // think
-  isActive                  Boolean        @default(true)
-  isSearchable              Boolean        @default(true)
+  scheduled                 Boolean              @default(false) // think
+  isActive                  Boolean              @default(true)
+  isSearchable              Boolean              @default(true)
   shortUrl                  String?
   primaryTeacherId          Int
-  primaryTeacher            Teacher        @relation(fields: [primaryTeacherId], references: [id], name: "TeacherPrograms")
-  coTeachers                Teacher[]      @relation(name:"CoTaughtPrograms")
-  registrations             Registration[]
+  primaryTeacher            Teacher              @relation(fields: [primaryTeacherId], references: [id], name: "TeacherPrograms")
+  coTeachers                Teacher[]            @relation(name: "CoTaughtPrograms")
+  participants              ProgramParticipant[]
+  leads                     Lead[]
   feeStructure              Json // Early bird pricing, region based pricing, etc [{type: default, price: 2500}]
-  createdAt                 DateTime       @default(now())
-  updatedAt                 DateTime       @updatedAt
-  status                    String         @default("draft") // draft, announced, in-progress, completed, cancelled, postponed
-  crfStatus                 String         @default("crf-not-submitted") // crf-submitted, crf-approved, crf-rejected
+  createdAt                 DateTime             @default(now())
+  updatedAt                 DateTime             @updatedAt
+  status                    String               @default("draft") // draft, announced, in-progress, completed, cancelled, postponed
+  crfStatus                 String               @default("crf-not-submitted") // crf-submitted, crf-approved, crf-rejected
   metaData                  Json
+  volunteers                Volunteer[]          @relation("VolunteerPrograms")
+  organisers                User[]               @relation("ProgramOrganisers")
 
   @@index([primaryTeacherId])
   @@index([centerId])
   @@index([programTypeId])
 }
 
-model Registration {
-  id Int @id @default(autoincrement())
-  programId Int
-  program Program @relation(fields: [programId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Lead {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String?
+  mobileNumber String?
+  programId    Int?
+  program      Program? @relation(fields: [programId], references: [id])
+
+  programTypes ProgramType[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  metaData     Json?
+  teacherId    Int?
+  teacher      Teacher?      @relation(fields: [teacherId], references: [id])
 
   @@index([programId])
+  @@index([teacherId])
 }
+
+model ProgramParticipant {
+  id             Int          @id @default(autoincrement())
+  programId      Int          @unique
+  program        Program      @relation(fields: [programId], references: [id])
+  registrationId Int          @unique
+  registration   Registration @relation(fields: [registrationId], references: [id], name: "ProgramParticipants")
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  metaData       Json?
+
+  @@index([programId])
+  @@index([registrationId])
+  @@index([userId])
+}
+
+model Registration {
+  id                   Int                 @id @default(autoincrement())
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  programParticipant   ProgramParticipant? @relation(name: "ProgramParticipants")
+  metaData             Json?
+  status               String              @default("confirmed") // booked, pending, confirmed, cancelled, refunded, failed
+  registrationDateTime DateTime            @default(now())
+  registrationDetails  Json?
+}
+
+model ProgramResource {
+  id            Int         @id @default(autoincrement())
+  programType   ProgramType @relation(fields: [programTypeId], references: [id])
+  programTypeId Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  metaData      Json?
+
+  @@index([programTypeId])
+}
+
+model ParticipantResource {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  resourceId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  metaData   Json?
+
+  @@index([userId])
+  @@index([resourceId])
+}
+
+model Resource {
+  id                   Int                   @id @default(autoincrement())
+  name                 String
+  description          String?
+  url                  String?
+  type                 String? // pdf, video, audio, image, link, etc
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  metaData             Json?
+  participantResources ParticipantResource[]
+}
+
+//Messaging - Whatsapp, Email, SMS, Notification
+
+//Attendance
+//Payments
+//Referrals and referral system
+//Coupons and coupon codes
+//Notifications
+//Reports
+//Settings
+//Admin
+//Participant Course History with Feedback + Comments
+//Credit Notes
+//Debit Notes
+//Invoice
+//Payment Gateway
+//Payment History
+//Payment Methods
+//Payment Terms
