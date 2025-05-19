@@ -1,0 +1,281 @@
+erDiagram
+    User {
+        int UserID PK
+        string Name
+        string Email
+        string Mobile
+        string Address
+        date CreatedDate
+        date LastUpdatedDate
+        boolean IsActive
+    }
+    
+    Participant {
+        int ParticipantID PK
+        int UserID FK
+        date RegistrationDate
+        string PreferredLanguage
+        string SpecialNeeds
+        string PaymentPreferences
+        boolean IsActive
+    }
+    
+    Volunteer {
+        int VolunteerID PK
+        int UserID FK
+        string AolID
+        date VolunteerSinceDate
+        date VTPCompletionDate
+        string VolunteerStatus
+        string SpecialSkills
+        string PreferredServiceAreas
+        boolean IsActive
+    }
+    
+    Teacher {
+        int TeacherID PK
+        int UserID FK
+        string TeacherID_AoL
+        date TeacherSinceDate
+        date CertificationDate
+        string TeacherStatus
+        text Biography
+        string ProfileImage
+        boolean HasSignedTerms
+        date TermsSignedDate
+        boolean IsActive
+    }
+    
+    Program {
+        int ProgramID PK
+        string ProgramName
+        text Description
+        string TypicalDuration
+        string Format
+        string TargetAudience
+        decimal DefaultBaseFee
+        boolean IsEntryLevel
+        boolean IsAdvancedLevel
+        boolean IsKidsProgram
+        string HealthDeclarations
+        boolean IsActive
+    }
+    
+    ProgramPrerequisite {
+        int PrerequisiteID PK
+        int ProgramID FK
+        int RequiredProgramID FK
+        int MinimumCompletions
+        boolean IsRequired
+        boolean AllowEquivalentVariations
+        text Notes
+    }
+    
+    TeacherEligibility {
+        int EligibilityID PK
+        int TeacherID FK
+        int ProgramID FK
+        date CertificationDate
+        int CertifiedBy
+        date LastRenewalDate
+        date NextRenewalDueDate
+        boolean IsActive
+    }
+    
+    Center {
+        int CenterID PK
+        string Name
+        string Address
+        string City
+        string State
+        string Country
+        string Coordinates
+        boolean IsPhysicalLocation
+        int MaxCapacity
+        int ContactPersonID FK
+        string ContactPersonName
+        string ContactPersonMobile
+        string ContactPersonEmail
+        string Facilities
+        boolean IsActive
+    }
+    
+    Course {
+        int CourseID PK
+        int ProgramID FK
+        date StartDate
+        date EndDate
+        time StartTime
+        time EndTime
+        int CenterID FK
+        int MainTeacherID FK
+        string LanguageOfInstruction
+        string Status
+        string RegistrationLink
+        string WhatsAppGroupLink
+        int MaxParticipants
+        date RegistrationOpenDate
+        date RegistrationCloseDate
+        decimal FeeAmount
+        string Currency
+        string DiscountCode
+        boolean IsInstitutional
+        string InstitutionName
+        string FundingType
+        text Notes
+        int AnnouncedByPersonID FK
+        date CreatedDate
+    }
+    
+    CourseTeacher {
+        int CourseTeacherID PK
+        int CourseID FK
+        int TeacherID FK
+        string Role
+    }
+    
+    CourseVolunteer {
+        int CourseVolunteerID PK
+        int CourseID FK
+        int VolunteerID FK
+        string Role
+    }
+    
+    Registration {
+        int RegistrationID PK
+        int CourseID FK
+        int ParticipantUserID FK
+        int RegisteredByUserID FK
+        date RegistrationDate
+        string ContactMobileAtRegistration
+        string ContactEmailAtRegistration
+        string PaymentStatus
+        decimal AmountPaid
+        string PaymentMode
+        string TransactionID UK
+        string ReferrerDetails
+        boolean HasMetPrerequisites
+        text Notes
+    }
+    
+    Attendance {
+        int AttendanceID PK
+        int RegistrationID FK
+        date SessionDate
+        int SessionNumber
+        boolean IsPresent
+        int MarkedByPersonID FK
+        time CheckInTime
+        time CheckOutTime
+    }
+    
+    ParticipantCourseHistory {
+        int HistoryID PK
+        int ParticipantID FK
+        int CourseID FK
+        string CompletionStatus
+        date CompletionDate
+        boolean FeedbackProvided
+        int FeedbackRating
+        text FeedbackComments
+    }
+    
+    TeacherRecommendation {
+        int RecommendationID PK
+        int VolunteerID FK
+        int RecommendingTeacherID FK
+        int ProgramID FK
+        date RecommendationDate
+        string RecommendationStatus
+        text Comments
+        boolean SevaCompleted
+        text PostVTPActivities
+    }
+    
+    Communication {
+        int CommunicationID PK
+        int CourseID FK
+        string CommunicationType
+        text MessageTemplate
+        date SentDate
+        string Status
+        json Recipients
+    }
+    
+    CourseMaterial {
+        int MaterialID PK
+        int CourseID FK
+        string MaterialType
+        date CreationDate
+        int CreatedBy
+        string StorageLink
+        boolean IsActive
+    }
+    
+    Lead {
+        int LeadID PK
+        int UserID FK
+        string Source
+        int InterestedProgramID FK
+        string Status
+        int AssignedToPersonID FK
+        text Notes
+        date CreatedDate
+        date LastContactDate
+        date NextFollowUpDate
+        string ConversionStatus
+    }
+    
+    Institution {
+        int InstitutionID PK
+        string Name
+        string Type
+        string Address
+        string ContactPerson
+        json ContactDetails
+        string PartnershipStatus
+        string PartnershipType
+    }
+    
+    InstitutionProgram {
+        int InstitutionProgramID PK
+        int InstitutionID FK
+        int ProgramID FK
+        string FundingModel
+        decimal DiscountPercentage
+        string ContractStatus
+        date StartDate
+        date EndDate
+    }
+    
+    User ||--o{ Participant : "has profile as"
+    User ||--o{ Volunteer : "has role as"
+    User ||--o{ Teacher : "has role as"
+    User ||--o{ Lead : "can be a"
+    
+    Program ||--o{ ProgramPrerequisite : "has"
+    Program ||--o{ Course : "has instances as"
+    Program }|--o{ TeacherEligibility : "requires eligibility"
+    
+    Teacher ||--o{ TeacherEligibility : "has"
+    Teacher ||--o{ CourseTeacher : "teaches in"
+    Teacher ||--o{ TeacherRecommendation : "recommends"
+    
+    Volunteer ||--o{ CourseVolunteer : "volunteers in"
+    Volunteer ||--o{ TeacherRecommendation : "is recommended as"
+    
+    Course ||--o{ CourseTeacher : "has"
+    Course ||--o{ CourseVolunteer : "has"
+    Course ||--o{ Registration : "has"
+    Course ||--o{ Communication : "sends"
+    Course ||--o{ CourseMaterial : "has"
+    
+    Center ||--o{ Course : "hosts"
+    
+    Registration ||--o{ Attendance : "tracks"
+    Registration }|--|| User : "registers"
+    
+    Participant ||--o{ ParticipantCourseHistory : "has"
+    
+    Institution ||--o{ InstitutionProgram : "sponsors"
+    Program ||--o{ InstitutionProgram : "offered as"

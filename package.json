@@ -18,7 +18,12 @@
     "preview_image_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/197c675e-4dbc-4c19-be36-9415d4979800/public"
   },
   "dependencies": {
-    "mysql2": "3.14.0"
+    "@planetscale/database": "^1.19.0",
+    "@prisma/adapter-planetscale": "^6.8.1",
+    "@prisma/client": "^6.8.1",
+    "hono": "^4.7.9",
+    "mysql2": "^3.14.1",
+    "prisma": "^6.8.1"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.8.18",
@@ -34,6 +39,9 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "test": "vitest"
+    "test": "vitest",
+    "prisma:generate": "prisma generate",
+    "prisma:dbpush": "prisma db push",
+    "prisma:studio": "prisma studio"
   }
 }
