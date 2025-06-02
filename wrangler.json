@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "crm-sync-engine",
+	"name": "crm2-be",
 	"main": "src/index.ts",
 	"compatibility_date": "2024-11-11",
 	"compatibility_flags": [
