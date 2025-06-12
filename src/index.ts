@@ -15,7 +15,7 @@ api.use('*', cors())
 api.get('/', async (c) => {
   const prisma = getPrismaClient()
   const results = await prisma.user.findMany()
-  return c.json({ message: "Hello World", results })
+  return c.json({ message: "Hello World !", results })
 })
 
 // api.post('/register', async (c) => {
