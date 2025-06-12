@@ -1,5 +1,20 @@
 // Cloudflare Worker Environment Types
 
+// Cloudflare Workflow Instance Interface
+export interface WorkflowInstance {
+  id: string;
+  status: 'running' | 'completed' | 'failed' | 'terminated';
+  result?: any;
+  error?: { message: string };
+}
+
+// Cloudflare Workflow Binding Interface  
+export interface WorkflowBinding {
+  create(options: { id: string; params: any }): Promise<WorkflowInstance>;
+  get(id: string): Promise<WorkflowInstance | null>;
+  list(): Promise<WorkflowInstance[]>;
+}
+
 export interface Env {
   // Database
   DATABASE_URL: string;
@@ -9,7 +24,7 @@ export interface Env {
   API_VERSION?: string;
   
   // Workflow Bindings
-  PROGRAM_TYPE_WORKFLOW?: any; // Workflow binding for program type processing
+  PROGRAM_TYPE_WORKFLOW?: WorkflowBinding; // Real Cloudflare Workflow binding
   
   // Secrets (these would be configured via wrangler secret put)
   // Add any secrets here as needed

@@ -1,3 +1,8 @@
+import { 
+  WorkflowEntrypoint,
+  WorkflowStep,
+  WorkflowEvent
+} from 'cloudflare:workers';
 import { ProgramTypeService } from '../services/program-type.service';
 import { 
   ProgramTypeData,
@@ -41,8 +46,8 @@ export interface ProgramTypeWorkflowResult {
   duration: number;
 }
 
-export class ProgramTypeWorkflow {
-  async run(event: any, step: any): Promise<ProgramTypeWorkflowResult> {
+export class ProgramTypeWorkflow extends WorkflowEntrypoint {
+  async run(event: WorkflowEvent<ProgramTypeWorkflowParams>, step: WorkflowStep): Promise<ProgramTypeWorkflowResult> {
     const startTime = Date.now();
     const executionId = generateRequestId();
     const { data, requestId, metadata } = event.payload;
@@ -253,24 +258,33 @@ export async function startProgramTypeWorkflow(
   params: ProgramTypeWorkflowParams
 ): Promise<string> {
   try {
-    const workflowId = generateRequestId();
+    const workflowId = `wf_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    // For now, just log the workflow start - actual implementation depends on Cloudflare Workflows setup
-    console.log(`Program Type Workflow Started: ${workflowId}`, {
+    console.log(`🚀 [REAL WORKFLOW] Starting Cloudflare Workflow: ${workflowId}`, {
       requestId: params.requestId,
-      itemCount: params.data.length
+      itemCount: params.data.length,
+      timestamp: new Date().toISOString()
     });
 
-    // TODO: Implement actual workflow creation when Cloudflare Workflows are properly configured
-    // const instance = await env.PROGRAM_TYPE_WORKFLOW?.create({
-    //   id: workflowId,
-    //   params
-    // });
+    // Create workflow instance using Cloudflare Workers Workflow API
+    if (env.PROGRAM_TYPE_WORKFLOW) {
+      const instance = await env.PROGRAM_TYPE_WORKFLOW.create({
+        id: workflowId,
+        params: params
+      });
 
-    return workflowId;
+      console.log(`✅ [REAL WORKFLOW] Workflow instance created successfully: ${workflowId}`, {
+        instanceId: instance.id,
+        status: 'created'
+      });
+
+      return workflowId;
+    } else {
+      throw new Error('PROGRAM_TYPE_WORKFLOW binding not available');
+    }
 
   } catch (error) {
-    console.error('Failed to start program type workflow:', error);
+    console.error('❌ [REAL WORKFLOW] Failed to start workflow:', error);
     throw new Error(`Failed to start workflow: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
@@ -286,20 +300,33 @@ export async function getProgramTypeWorkflowStatus(
   error?: string;
 }> {
   try {
-    // TODO: Implement actual workflow status retrieval when Cloudflare Workflows are properly configured
-    // const instance = await env.PROGRAM_TYPE_WORKFLOW?.get(workflowId);
-    
-    console.log(`Getting workflow status for: ${workflowId}`);
+    console.log(`🔍 [REAL WORKFLOW] Getting status for workflow: ${workflowId}`);
 
-    return {
-      id: workflowId,
-      status: 'completed', // Placeholder for now
-      result: undefined,
-      error: undefined
-    };
+    if (env.PROGRAM_TYPE_WORKFLOW) {
+      const instance = await env.PROGRAM_TYPE_WORKFLOW.get(workflowId);
+      
+      if (!instance) {
+        throw new Error(`Workflow ${workflowId} not found`);
+      }
+
+      console.log(`📊 [REAL WORKFLOW] Status retrieved: ${instance.status}`, {
+        workflowId,
+        status: instance.status,
+        hasResult: !!instance.result
+      });
+
+      return {
+        id: workflowId,
+        status: instance.status as 'running' | 'completed' | 'failed',
+        result: instance.result,
+        error: instance.error?.message
+      };
+    } else {
+      throw new Error('PROGRAM_TYPE_WORKFLOW binding not available');
+    }
 
   } catch (error) {
-    console.error('Failed to get workflow status:', error);
+    console.error('❌ [REAL WORKFLOW] Failed to get workflow status:', error);
     throw new Error(`Failed to get workflow status: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 } 
