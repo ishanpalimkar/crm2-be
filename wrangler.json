@@ -38,11 +38,26 @@
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
-	// "vars": { "MY_VARIABLE": "production_value" },
+	"vars": { 
+		"NODE_ENV": "development",
+		"API_VERSION": "1.0.0"
+	},
 	/**
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
 	 */
+
+	/**
+	 * Workflows Configuration
+	 * https://developers.cloudflare.com/workflows/
+	 */
+	"workflows": [
+		{
+			"binding": "PROGRAM_TYPE_WORKFLOW",
+			"name": "program-type-processor",
+			"class_name": "ProgramTypeWorkflow"
+		}
+	],
 
 	/**
 	 * Static Assets

@@ -106,13 +106,22 @@ model TeacherEligibility {
 
 model ProgramType {
   id                 Int                  @id @default(autoincrement())
-  name               String
+  programTypeId      String               @unique // External API identifier like "ptyp_abc123"
+  programTypeName    String               // Display name for the program type
   description        String?
+  typicalDuration    String?              // e.g., "3 days", "5 days"
+  format             String?              // e.g., "Online", "Residential", "Hybrid"
+  targetAudience     String?              // e.g., "Beginners", "Experienced practitioners"
+  defaultBaseFee     Decimal?             // Base fee in currency (e.g., 3000.00)
+  isEntryLevel       Boolean              @default(false)
+  isAdvancedLevel    Boolean              @default(false)
+  isKidsProgram      Boolean              @default(false)
+  healthDeclarations String?              // Health declaration requirements
   // refer er diagram for more details
   // honorarium calculations table (changes based on seniority, region, venue type, etc)
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  metaData           Json
+  metaData           Json?
   isActive           Boolean              @default(true)
   activeUntil        DateTime?
   teacherEligibility TeacherEligibility[]
@@ -120,7 +129,13 @@ model ProgramType {
   programs           Program[]
   resources          ProgramResource[]
   leads              Lead[]
-  feeStructure       Json
+  feeStructure       Json?
+
+  @@index([programTypeId])
+  @@index([isActive])
+  @@index([isEntryLevel])
+  @@index([isAdvancedLevel])
+  @@index([isKidsProgram])
 }
 
 model Center {

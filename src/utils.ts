@@ -5,6 +5,19 @@
 import { PrismaPlanetScale } from "@prisma/adapter-planetscale"
 import { PrismaClient } from "./generated/prisma"
 import { env } from 'cloudflare:workers'
+import { 
+  PaginationMeta, 
+  SuccessResponse, 
+  ErrorResponse, 
+  ErrorDetail, 
+  PaginationQuery 
+} from './types/program-types'
+import { 
+  ValidationRule, 
+  ValidationError, 
+  HttpStatus, 
+  ErrorCode 
+} from './types/common'
 
 // // MySQL reserved keywords list
 // export const MYSQL_RESERVED_KEYWORDS = [
@@ -314,4 +327,278 @@ export function getPrismaClient(){
     const adapter = new PrismaPlanetScale({url:env.DATABASE_URL})
   const prisma = new PrismaClient({ adapter })
   return prisma
+}
+
+// Utility Functions
+
+/**
+ * Generate a unique request ID
+ */
+export function generateRequestId(): string {
+  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Calculate pagination metadata
+ */
+export function calculatePagination(
+  totalItems: number,
+  currentPage: number,
+  pageSize: number,
+  baseUrl: string,
+  additionalParams: Record<string, string> = {}
+): PaginationMeta {
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const hasNext = currentPage < totalPages;
+  const hasPrev = currentPage > 1;
+  
+  const buildUrl = (page: number) => {
+    const params = new URLSearchParams({
+      ...additionalParams,
+      offset: ((page - 1) * pageSize).toString(),
+      limit: pageSize.toString()
+    });
+    return `${baseUrl}?${params.toString()}`;
+  };
+
+  return {
+    totalItems,
+    currentPage,
+    pageSize,
+    totalPages,
+    links: {
+      next: hasNext ? buildUrl(currentPage + 1) : null,
+      prev: hasPrev ? buildUrl(currentPage - 1) : null
+    }
+  };
+}
+
+/**
+ * Parse pagination query parameters
+ */
+export function parsePaginationQuery(url: URL): PaginationQuery & { currentPage: number } {
+  const limit = Math.min(
+    Math.max(parseInt(url.searchParams.get('limit') || '10'), 1), 
+    100
+  ); // Default 10, max 100
+  const offset = Math.max(parseInt(url.searchParams.get('offset') || '0'), 0);
+  const currentPage = Math.floor(offset / limit) + 1;
+
+  return { limit, offset, currentPage };
+}
+
+/**
+ * Format success response
+ */
+export function formatSuccessResponse<T>(
+  data: T,
+  meta?: SuccessResponse<T>['meta']
+): SuccessResponse<T> {
+  return {
+    status: 'success',
+    data,
+    meta: {
+      ...meta,
+      processedAt: new Date().toISOString()
+    }
+  };
+}
+
+/**
+ * Format error response
+ */
+export function formatErrorResponse(
+  error: ErrorDetail | ErrorDetail[],
+  requestId?: string
+): ErrorResponse {
+  const isArray = Array.isArray(error);
+  
+  return {
+    status: isArray && error.length > 1 ? 'fail' : 'error',
+    ...(isArray ? { errors: error } : { error }),
+    meta: {
+      requestId,
+      timestamp: new Date().toISOString()
+    }
+  };
+}
+
+/**
+ * Create error detail object
+ */
+export function createErrorDetail(
+  code: string,
+  message: string,
+  details?: string | object,
+  field?: string,
+  value?: any
+): ErrorDetail {
+  return {
+    code,
+    message,
+    ...(details && { details }),
+    ...(field && { field }),
+    ...(value !== undefined && { value })
+  };
+}
+
+/**
+ * Validate data against rules
+ */
+export function validateData(
+  data: any,
+  rules: ValidationRule[]
+): ValidationError[] {
+  const errors: ValidationError[] = [];
+
+  for (const rule of rules) {
+    const value = data[rule.field];
+    
+    // Required field validation
+    if (rule.required && (value === undefined || value === null || value === '')) {
+      errors.push({
+        field: rule.field,
+        message: `${rule.field} is required`,
+        value,
+        rule: 'required'
+      });
+      continue;
+    }
+
+    // Skip further validation if field is optional and empty
+    if (!rule.required && (value === undefined || value === null || value === '')) {
+      continue;
+    }
+
+    // Type validation
+    if (rule.type) {
+      const actualType = Array.isArray(value) ? 'array' : typeof value;
+      if (actualType !== rule.type) {
+        errors.push({
+          field: rule.field,
+          message: `${rule.field} must be of type ${rule.type}`,
+          value,
+          rule: 'type'
+        });
+        continue;
+      }
+    }
+
+    // String length validation
+    if (typeof value === 'string') {
+      if (rule.minLength && value.length < rule.minLength) {
+        errors.push({
+          field: rule.field,
+          message: `${rule.field} must be at least ${rule.minLength} characters long`,
+          value,
+          rule: 'minLength'
+        });
+      }
+      
+      if (rule.maxLength && value.length > rule.maxLength) {
+        errors.push({
+          field: rule.field,
+          message: `${rule.field} must be no more than ${rule.maxLength} characters long`,
+          value,
+          rule: 'maxLength'
+        });
+      }
+    }
+
+    // Pattern validation
+    if (rule.pattern && typeof value === 'string' && !rule.pattern.test(value)) {
+      errors.push({
+        field: rule.field,
+        message: `${rule.field} format is invalid`,
+        value,
+        rule: 'pattern'
+      });
+    }
+
+    // Custom validation
+    if (rule.custom) {
+      const customResult = rule.custom(value);
+      if (customResult !== true) {
+        errors.push({
+          field: rule.field,
+          message: typeof customResult === 'string' ? customResult : `${rule.field} is invalid`,
+          value,
+          rule: 'custom'
+        });
+      }
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Convert validation errors to error details
+ */
+export function validationErrorsToErrorDetails(errors: ValidationError[]): ErrorDetail[] {
+  return errors.map(error => createErrorDetail(
+    ErrorCode.VALIDATION_ERROR,
+    error.message,
+    undefined,
+    error.field,
+    error.value
+  ));
+}
+
+/**
+ * Safe JSON parse with error handling
+ */
+export function safeJsonParse<T = any>(jsonString: string, fallback: T): T {
+  try {
+    return JSON.parse(jsonString);
+  } catch {
+    return fallback;
+  }
+}
+
+/**
+ * Sanitize data for database insertion
+ */
+export function sanitizeForDb<T extends Record<string, any>>(data: T): Partial<T> {
+  const sanitized: any = { ...data };
+  
+  // Remove undefined values and trim strings
+  Object.keys(sanitized).forEach(key => {
+    if (sanitized[key] === undefined) {
+      delete sanitized[key];
+    } else if (typeof sanitized[key] === 'string') {
+      sanitized[key] = sanitized[key].trim();
+    }
+  });
+  
+  return sanitized as Partial<T>;
+}
+
+/**
+ * Retry function with exponential backoff
+ */
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> {
+  let lastError: Error;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+      
+      if (attempt === maxRetries) {
+        throw lastError;
+      }
+      
+      // Exponential backoff
+      const delay = baseDelay * Math.pow(2, attempt - 1);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+  
+  throw lastError!;
 }
