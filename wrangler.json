@@ -1,56 +1,19 @@
-/**
- * For more details on how to configure Wrangler, refer to:
- * https://developers.cloudflare.com/workers/wrangler/configuration/
- */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "crm2-be",
 	"main": "src/index.ts",
 	"compatibility_date": "2024-11-11",
 	"compatibility_flags": [
-		"nodejs_compat",
+		"nodejs_compat"
 	],
 	"observability": {
 		"enabled": true
 	},
-	// "hyperdrive": [
-	// 	{
-	// 		"binding": "HYPERDRIVE",
-	// 		"id": "7668c461af3c47969772c19cbd988391",
-	// 		"localConnectionString": "<ENTER_LOCAL_CONNECTION_STRING_FOR_LOCAL_DEVELOPMENT>"
-	// 	}
-	// ],
 	"upload_source_maps": true,
-	/**
-	 * Smart Placement
-	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-	 */
-	// "placement": { "mode": "smart" },
-
-	/**
-	 * Bindings
-	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-	 * databases, object storage, AI inference, real-time communication and more.
-	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-	 */
-
-	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 */
 	"vars": { 
 		"NODE_ENV": "development",
 		"API_VERSION": "1.0.0"
 	},
-	/**
-	 * Note: Use secrets to store sensitive data.
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 */
-
-	/**
-	 * Workflows Configuration
-	 * https://developers.cloudflare.com/workflows/
-	 */
 	"workflows": [
 		{
 			"binding": "PROGRAM_TYPE_WORKFLOW",
@@ -58,16 +21,40 @@
 			"class_name": "ProgramTypeWorkflow"
 		}
 	],
-
-	/**
-	 * Static Assets
-	 * https://developers.cloudflare.com/workers/static-assets/binding/
-	 */
-	// "assets": { "directory": "./public/", "binding": "ASSETS" },
-
-	/**
-	 * Service Bindings (communicate between multiple Workers)
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-	 */
-	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
-}
+	"env": {
+		"sandbox": {
+			"name": "crm2-be-sandbox",
+			"vars": {
+				"NODE_ENV": "sandbox",
+				"API_VERSION": "1.0.0"
+			},
+			"observability": {
+				"enabled": true
+			},
+			"workflows": [
+				{
+					"binding": "PROGRAM_TYPE_WORKFLOW",
+					"name": "program-type-processor-sandbox",
+					"class_name": "ProgramTypeWorkflow"
+				}
+			]
+		},
+		"production": {
+			"name": "crm2-be-production",
+			"vars": {
+				"NODE_ENV": "production",
+				"API_VERSION": "1.0.0"
+			},
+			"observability": {
+				"enabled": true
+			},
+			"workflows": [
+				{
+					"binding": "PROGRAM_TYPE_WORKFLOW",
+					"name": "program-type-processor-production",
+					"class_name": "ProgramTypeWorkflow"
+				}
+			]
+		}
+	}
+} 

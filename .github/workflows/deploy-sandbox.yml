@@ -1,0 +1,65 @@
+name: Deploy to Cloudflare Workers (Sandbox)
+
+on:
+  push:
+    branches:
+      - feature/cloudflare-workflows-program-types
+  pull_request:
+    branches:
+      - feature/cloudflare-workflows-program-types
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  deploy-sandbox:
+    runs-on: ubuntu-latest
+    name: Deploy to Sandbox Environment
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run prisma:generate
+
+      - name: TypeScript Build Check
+        run: npx tsc --noEmit
+
+      - name: Wrangler Build Check
+        run: npx wrangler deploy --dry-run --env sandbox
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Deploy to Cloudflare Workers (Sandbox)
+        run: npx wrangler deploy --env sandbox
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Set Database URL Secret
+        run: |
+          echo "${{ secrets.DATABASE_URL_SANDBOX }}" | npx wrangler secret put DATABASE_URL --env sandbox
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Deployment Success Notification
+        if: success()
+        run: |
+          echo "✅ Successfully deployed to Cloudflare Workers Sandbox!"
+          echo "🔗 Sandbox URL: https://crm2-be-sandbox.your-subdomain.workers.dev"
+          echo "📊 Monitor at: https://dash.cloudflare.com/profile/analytics"
+
+      - name: Deployment Failure Notification  
+        if: failure()
+        run: |
+          echo "❌ Deployment to Sandbox failed!"
+          echo "🔍 Check the logs above for details" 
