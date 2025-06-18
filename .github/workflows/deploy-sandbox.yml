@@ -40,14 +40,6 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
-      - name: Register workers.dev subdomain (if needed)
-        run: |
-          echo "Checking if workers.dev subdomain is configured..."
-          npx wrangler subdomain || echo "Subdomain may already be configured or will be auto-configured"
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        continue-on-error: true
-
       - name: Deploy to Cloudflare Workers (Sandbox)
         run: npx wrangler deploy --env sandbox
         env:

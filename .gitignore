@@ -175,3 +175,9 @@ dist
 # Prisma
 
 /src/generated/prisma
+
+# Self learning
+
+GITHUB_ACCOUNT_SWITCH_RUNBOOK.md
+TEST_DEPLOYMENT_SANDBOX.md
+
