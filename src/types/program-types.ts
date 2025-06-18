@@ -110,4 +110,35 @@ export interface WorkflowResult {
   processedCount: number;
   errors: ErrorDetail[];
   data?: ProgramTypeData[];
+}
+
+export interface ProgramTypeWorkflowParams {
+  data: ProgramTypeData[];
+  requestId: string;
+  batchSize?: number;
+  metadata?: {
+    source?: string;
+    userId?: string;
+    timestamp?: string;
+  };
+}
+
+export interface ProgramTypeWorkflowResult {
+  success: boolean;
+  processedCount: number;
+  successfulItems: number;
+  failedItems: number;
+  invalidItems: number;
+  executionId: string;
+  duration: number;
+  observabilityData?: {
+    metrics: any;
+    performance: any;
+    steps: string[];
+    alertsTriggered: boolean;
+    resourceUsage: {
+      peakMemory: number;
+      averageStepDuration: number;
+    };
+  };
 } 

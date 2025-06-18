@@ -1,7 +1,7 @@
 import { WorkflowEntrypoint, WorkflowEvent, WorkflowStep } from 'cloudflare:workers';
 import { ProgramTypeWorkflowParams, ProgramTypeWorkflowResult } from '../types/program-types';
-import { ProgramTypeService } from '../services/program-type-service';
-import { generateRequestId } from '../utils';
+import { ProgramTypeService } from '../services/program-type.service';
+import { generateRequestId, getPrismaClient } from '../utils';
 
 /**
  * 🔍 Enhanced ProgramType Workflow with Full Observability
@@ -277,13 +277,14 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
           return result;
         } catch (error) {
           workflowMetrics.errorCount++;
-          ErrorTracker.trackError(error, {
+          const errorObj = error instanceof Error ? error : new Error(String(error));
+          ErrorTracker.trackError(errorObj, {
             workflowId: executionId,
             step: 'validate-input',
             requestId: requestId,
             data: { itemCount: event.payload.data.length }
           });
-          logger.error('validate-input', 'Validation failed', error);
+          logger.error('validate-input', 'Validation failed', errorObj);
           throw error;
         }
       });
@@ -301,7 +302,8 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
         logger.info('initialize-database', 'Initializing database connection');
         
         try {
-          const service = new ProgramTypeService();
+          const prisma = getPrismaClient();
+          const service = new ProgramTypeService({ prisma });
           const connectionTest = await service.testConnection();
           
           const stepMetrics = performanceMonitor.endStep('initialize-database', {
@@ -318,12 +320,13 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
           return { service, connectionTest };
         } catch (error) {
           workflowMetrics.errorCount++;
-          ErrorTracker.trackError(error, {
+          const errorObj = error instanceof Error ? error : new Error(String(error));
+          ErrorTracker.trackError(errorObj, {
             workflowId: executionId,
             step: 'initialize-database',
             requestId: requestId
           });
-          logger.error('initialize-database', 'Database initialization failed', error);
+          logger.error('initialize-database', 'Database initialization failed', errorObj);
           throw error;
         }
       });
@@ -368,20 +371,21 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
           return results;
         } catch (error) {
           workflowMetrics.errorCount++;
-          ErrorTracker.trackError(error, {
+          const errorObj = error instanceof Error ? error : new Error(String(error));
+          ErrorTracker.trackError(errorObj, {
             workflowId: executionId,
             step: 'process-batches',
             requestId: requestId,
             data: { itemCount: validationResult.validItems.length }
           });
-          logger.error('process-batches', 'Batch processing failed', error);
+          logger.error('process-batches', 'Batch processing failed', errorObj);
           throw error;
         }
       });
 
       // Step 4: Final Metrics and Alerting
       const finalMetrics = performanceMonitor.getOverallMetrics();
-      workflowMetrics.processingTimes = finalMetrics.stepMetrics;
+      workflowMetrics.processingTimes = Object.values(finalMetrics.stepMetrics);
       
       // Check alert thresholds
       await AlertingService.checkAndAlert(workflowMetrics, logger);
@@ -433,7 +437,8 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
         completedSteps: Object.keys(finalMetrics.stepMetrics)
       });
 
-      ErrorTracker.trackError(error, {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      ErrorTracker.trackError(errorObj, {
         workflowId: executionId,
         step: 'workflow-execution',
         requestId: requestId,
@@ -464,8 +469,9 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
         validItems.push(item);
         
       } catch (error) {
-        logger.error('validate-input', 'Item validation error', error, { item });
-        invalidItems.push({ item, reason: error.message });
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('validate-input', 'Item validation error', errorObj, { item });
+        invalidItems.push({ item, reason: errorObj.message });
       }
     }
     
@@ -505,8 +511,8 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
         const batchDuration = Date.now() - batchStart;
         batchTimes.push(batchDuration);
         
-        const batchSuccessful = batchResults.filter(r => r.success).length;
-        const batchFailed = batchResults.filter(r => !r.success).length;
+        const batchSuccessful = batchResults.filter((r: any) => r.success).length;
+        const batchFailed = batchResults.filter((r: any) => !r.success).length;
         
         successfulItems += batchSuccessful;
         failedItems += batchFailed;
@@ -522,7 +528,7 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
         
         // Log any failed items in this batch
         if (batchFailed > 0) {
-          const failedResults = batchResults.filter(r => !r.success);
+          const failedResults = batchResults.filter((r: any) => !r.success);
           logger.error('process-batch', `Batch ${i + 1} had failures`, new Error('Batch processing failures'), {
             batchIndex: i,
             failedItems: failedResults
@@ -534,12 +540,13 @@ export class EnhancedProgramTypeWorkflow extends WorkflowEntrypoint {
         batchTimes.push(batchDuration);
         failedItems += batch.length;
         
-        logger.error('process-batch', `Batch ${i + 1} failed completely`, error, {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        logger.error('process-batch', `Batch ${i + 1} failed completely`, errorObj, {
           batchIndex: i,
           batchSize: batch.length
         });
         
-        ErrorTracker.trackError(error, {
+        ErrorTracker.trackError(errorObj, {
           workflowId: metrics.workflowId,
           step: 'process-batch',
           requestId: 'batch-' + i,

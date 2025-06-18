@@ -42,8 +42,14 @@ export interface GetProgramTypesResult {
 export class ProgramTypeService {
   private prisma: PrismaClient;
 
-  constructor(options: ProgramTypeServiceOptions) {
-    this.prisma = options.prisma;
+  constructor(options?: ProgramTypeServiceOptions) {
+    // Allow creating without options for enhanced workflow
+    if (options) {
+      this.prisma = options.prisma;
+    } else {
+      // This will be handled by getPrismaClient in the enhanced workflow
+      this.prisma = null as any;
+    }
   }
 
   /**
@@ -447,5 +453,26 @@ export class ProgramTypeService {
         }
       };
     }
+  }
+
+  /**
+   * Test database connection
+   */
+  async testConnection(): Promise<boolean> {
+    try {
+      await this.prisma.$connect();
+      return true;
+    } catch (error) {
+      console.error('Database connection test failed:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Create batch of items - alias for createProgramTypes for workflow compatibility
+   */
+  async createBatch(items: ProgramTypeData[]): Promise<CreateProgramTypeResult[]> {
+    const result = await this.createProgramTypes(items);
+    return result.results;
   }
 } 
